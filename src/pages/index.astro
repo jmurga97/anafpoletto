@@ -1,0 +1,103 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroSection from "../components/HeroSection.astro";
+import Accordion from "../components/Accordion.astro";
+
+const faqs = [
+    {
+        question: "¿Qué tipo de terapia ofreces?",
+        answer: "Trabajo desde una orientación psicoanalítica, centrada en la palabra y en lo singular de cada persona. No se trata de dar consejos, sino de abrir un espacio donde puedas hablar y elaborar lo que te produce malestar.",
+    },
+    {
+        question: "¿Qué tipo de problemas atiendes?",
+        answer: "Acompaño a personas que atraviesan: experiencias de angustia que se manifiestan de distintas formas malestar emocional que no siempre tiene una causa clara sensación de vacío o de falta de sentido desorientación frente a decisiones o momentos de la vida dificultades que se repiten en las relaciones o en la forma de vivir ciertas situaciones",
+    },
+    {
+        question: "¿La terapia es online o presencial?",
+        answer: "Actualmente trabajo en modalidad online. Esto permite sostener el proceso terapéutico desde distintos lugares y horarios flexibles.",
+    },
+    {
+        question: "¿Cuánto dura una sesión?",
+        answer: "La duración habitual de una sesión está entre 45 minutos y una hora. Sin embargo, no se trata de un tiempo fijo y rígido, sino que puede ajustarse según cómo se vaya desarrollando el encuentro y lo que sea necesario trabajar en ese momento.",
+    },
+    {
+        question: "¿Cada cuánto son las sesiones?",
+        answer: "Lo habitual es una sesión por semana, aunque la frecuencia puede ajustarse según cada caso.",
+    },
+    {
+        question: "¿Cómo sé si la terapia es para mí?",
+        answer: "No es necesario tener todo claro antes de empezar. Muchas veces las personas llegan sin poder nombrar exactamente lo que les ocurre. La primera entrevista sirve justamente para situar la demanda y ver si este espacio puede ser útil.",
+    },
+    {
+        question: "¿Qué necesito para empezar?",
+        answer: "Solo necesitas un dispositivo con cámara, conexión a internet y un espacio tranquilo donde puedas hablar con privacidad.",
+    },
+    {
+        question: "¿Qué hago si tengo una emergencia psicológica?",
+        answer: "Este espacio no sustituye la atención de urgencia. En situaciones de crisis grave o riesgo inmediato, es importante acudir a servicios de emergencia o a dispositivos de atención local.",
+    },
+];
+---
+
+<BaseLayout title="Ana F. Poletto | Psicóloga - Terapia Psicoanalítica Online">
+    <!-- Hero Section with Parallax Vanta Background -->
+    <HeroSection />
+
+    <!-- FAQ Section -->
+    <section
+        class="min-h-[60vh] relative py-24 md:py-32 bg-global"
+        id="faq-section"
+    >
+        <div class="container mx-auto px-4">
+            <div class="px-4 md:px-20 flex flex-col lg:flex-row lg:justify-between items-start gap-8 lg:gap-16">
+                <div class="min-w-0 lg:min-w-xl mb-8 lg:mb-16">
+                    <p
+                        class="text-slate-950 text-lg md:text-2xl tracking-widest uppercase mb-4"
+                    >
+                        ANTES DE COMENZAR
+                    </p>
+                    <h2
+                        class="text-2xl md:text-5xl lg:text-7xl text-left text-slate-950 font-bold"
+                    >
+                        Sobre el espacio de trabajo
+                    </h2>
+                </div>
+
+                <div class="space-y-0 min-h-5 w-full lg:w-auto">
+                    {
+                        faqs.map((faq, index) => (
+                            <Accordion
+                                question={faq.question}
+                                answer={faq.answer}
+                                isOpen={index === 0}
+                            />
+                        ))
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 md:py-32 bg-global">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-2xl mx-auto">
+                <h2
+                    class="text-3xl md:text-4xl text-slate-950 mb-6 font-semibold"
+                >
+                    ¿Listo para comenzar?
+                </h2>
+                <p class="text-slate-900 text-lg mb-10">
+                    Cada análisis es una experiencia de creación, no de
+                    corrección.
+                </p>
+                <a
+                    href="/reservar"
+                    class="inline-block bg-slate-800 text-slate-100 px-6 py-3 md:px-10 md:py-4 rounded-full text-base md:text-lg font-medium hover:bg-gray-300 transition-all duration-300 transform hover:scale-105"
+                >
+                    Reservar
+                </a>
+            </div>
+        </div>
+    </section>
+</BaseLayout>

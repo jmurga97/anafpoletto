@@ -1,0 +1,126 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CredentialsCard from "../components/CredentialsCard.astro";
+---
+
+<BaseLayout title="Sobre mí | Ana F. Poletto - Psicóloga">
+    <!-- Profile Section -->
+    <section class="pt-24 pb-16 md:py-38 bg-[0xfcfcfc] text-slate-950">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <div
+                    class="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-36 items-start"
+                >
+                    <!-- Photo -->
+                    <div class="opacity-0 translate-y-10" id="about-photo">
+                        <div class="aspect-3/4 rounded-2xl overflow-hidden">
+                            <!-- Placeholder image - replace with actual photo -->
+                            <img
+                                src="/anafpoletto.webp"
+                                alt="Ana F. Poletto - Psicóloga"
+                                class="w-full h-full object-cover grayscale"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Bio Content -->
+                    <div class="opacity-0 translate-y-10" id="about-content">
+                        <h2
+                            class="text-2xl md:text-3xl text-slate-950 mb-6 font-semibold"
+                        >
+                            Ana F. Poletto
+                        </h2>
+
+                        <div class="prose text-pretty prose-invert max-w-none">
+                            <p
+                                class="text-slate-950 text-lg leading-relaxed mb-6"
+                            >
+                                Ana F. Poletto es psicóloga licenciada por la
+                                Universidad Católica Andrés Bello (Caracas,
+                                Venezuela) y Máster en Clínica Psicoanalítica y
+                                Psicopatología por la Universidad de Barcelona
+                                (Barcelona, España). Su práctica clínica se
+                                orienta desde el psicoanálisis, ofreciendo un
+                                espacio de escucha pensado para cada persona,
+                                donde el malestar pueda ser trabajado a su
+                                propio ritmo, sin soluciones prefabricadas.
+                            </p>
+                            <p
+                                class="text-slate-950 text-lg leading-relaxed mb-6"
+                            >
+                                Se encuentra registrada como psicóloga en la
+                                Federación de Psicólogos de Venezuela (N.º
+                                FVP-19.977) y en el Colegio de Psicólogos del
+                                Estado Miranda, como parte de su habilitación
+                                profesional en Venezuela y de su ejercicio
+                                clínico conforme a las normas profesionales
+                                vigentes en ese país.
+                            </p>
+                            <p
+                                class="text-slate-950 text-lg leading-relaxed mb-8"
+                            >
+                                Actualmente desarrolla su práctica en modalidad
+                                online, acompañando a personas en distintas
+                                geografías, especialmente a personas
+                                hispanohablantes y miembros de la comunidad
+                                venezolana que residen fuera de su país.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Credentials -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16 w-full">
+                    <div id="about-label" class="w-full space-y-8">
+                        <h3 class="text-sm tracking-widest uppercase mb-4">
+                            Formación
+                        </h3>
+
+                        <CredentialsCard
+                            title="Licenciada en Psicología"
+                            university="Universidad Católica Andrés Bello (Venezuela)"
+                            logoUrl="/ucab logo.png"
+                        />
+
+                        <CredentialsCard
+                            title="Máster en Clínica Psicoanalítica y Psicopatología"
+                            university="Universidad de Barcelona"
+                            logoUrl="/universidad-barcelona.jpeg"
+                        />
+                    </div>
+                    <!-- Professional Numbers -->
+                    <div id="about-label" class="w-full space-y-8">
+                        <h3 class="text-sm tracking-widest uppercase mb-4">
+                            Datos profesionales
+                        </h3>
+                        <CredentialsCard
+                            title="Número de federación"
+                            university="N.º FVP-19.977"
+                            logoUrl="/fpv-vzla.png"
+                        />
+                        <CredentialsCard
+                            title="Colegiatura"
+                            university="Colegio de Psicólogos de Miranda"
+                            logoUrl="/colegio-psi-miranda.jpeg"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</BaseLayout>
+
+<script>
+    import gsap from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("astro:page-load", () => {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        tl.to("#about-label", { opacity: 1, y: 0, duration: 0.8, delay: 0.2 })
+            .to("#about-title", { opacity: 1, y: 0, duration: 1 }, "-=0.5")
+            .to("#about-photo", { opacity: 1, y: 0, duration: 1 }, "-=0.5")
+            .to("#about-content", { opacity: 1, y: 0, duration: 1 }, "-=0.7");
+    });
+</script>

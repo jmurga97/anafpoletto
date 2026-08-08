@@ -1,0 +1,209 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+    const posts = await getCollection("blog", ({ data }) =>
+        import.meta.env.PROD ? data.draft !== true : true,
+    );
+
+    return posts.map((post) => ({
+        params: { slug: post.id },
+        props: { post },
+    }));
+}
+
+interface Props {
+    post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formattedDate = new Intl.DateTimeFormat("es-ES", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+}).format(post.data.pubDate);
+---
+
+<BaseLayout
+    title={`${post.data.title} | Ana F. Poletto`}
+    description={post.data.description}
+    canonical={`/blog/${post.id}`}
+    image={post.data.coverImage}
+    ogType="article"
+    publishedTime={post.data.pubDate}
+>
+    <article class="bg-global text-slate-950 pt-28 md:pt-36 pb-20 md:pb-32">
+        <div class="container mx-auto px-4">
+            <header class="max-w-4xl mx-auto">
+                <a
+                    href="/blog"
+                    class="inline-flex text-sm font-medium text-slate-600 hover:text-slate-950 transition-colors mb-12 md:mb-16"
+                >
+                    ← Volver al blog
+                </a>
+                <time
+                    datetime={post.data.pubDate.toISOString()}
+                    class="block text-sm md:text-base text-slate-500 mb-5"
+                >
+                    {formattedDate}
+                </time>
+                <h1 class="text-4xl sm:text-5xl md:text-7xl font-semibold tracking-tight text-balance mb-7">
+                    {post.data.title}
+                </h1>
+                <p class="max-w-3xl text-lg md:text-2xl leading-relaxed text-slate-700 text-pretty">
+                    {post.data.description}
+                </p>
+            </header>
+
+            {
+                post.data.coverImage && (
+                    <figure class="max-w-5xl mx-auto my-12 md:my-20">
+                        <div class="aspect-[16/9] overflow-hidden rounded-2xl bg-slate-100">
+                            <img
+                                src={post.data.coverImage}
+                                alt={post.data.coverAlt}
+                                class="h-full w-full object-cover grayscale"
+                            />
+                        </div>
+                    </figure>
+                )
+            }
+
+            <div class="article-body max-w-[68ch] mx-auto mt-14 md:mt-20">
+                <Content />
+            </div>
+
+            <footer class="max-w-[68ch] mx-auto mt-16 pt-8 border-t border-slate-200">
+                <a
+                    href="/blog"
+                    class="text-sm font-medium text-slate-700 hover:text-slate-950 underline decoration-slate-300 underline-offset-4 transition-colors"
+                >
+                    Volver a todos los artículos
+                </a>
+            </footer>
+        </div>
+    </article>
+</BaseLayout>
+
+<style>
+    .article-body :global(p) {
+        margin-block: 1.5rem;
+        color: var(--color-slate-800);
+        font-size: 1.0625rem;
+        line-height: 1.85;
+    }
+
+    .article-body :global(h2),
+    .article-body :global(h3),
+    .article-body :global(h4) {
+        color: var(--color-slate-950);
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        text-wrap: balance;
+    }
+
+    .article-body :global(h2) {
+        margin: 3.5rem 0 1.25rem;
+        font-size: clamp(1.75rem, 4vw, 2.25rem);
+        line-height: 1.2;
+    }
+
+    .article-body :global(h3) {
+        margin: 2.75rem 0 1rem;
+        font-size: 1.5rem;
+        line-height: 1.3;
+    }
+
+    .article-body :global(h4) {
+        margin: 2.25rem 0 0.75rem;
+        font-size: 1.2rem;
+    }
+
+    .article-body :global(a) {
+        color: var(--color-slate-950);
+        text-decoration: underline;
+        text-decoration-color: var(--color-slate-400);
+        text-underline-offset: 0.2em;
+    }
+
+    .article-body :global(a:hover) {
+        text-decoration-color: currentColor;
+    }
+
+    .article-body :global(ul),
+    .article-body :global(ol) {
+        margin-block: 1.5rem;
+        padding-left: 1.5rem;
+        color: var(--color-slate-800);
+        line-height: 1.8;
+    }
+
+    .article-body :global(ul) {
+        list-style: disc;
+    }
+
+    .article-body :global(ol) {
+        list-style: decimal;
+    }
+
+    .article-body :global(li + li) {
+        margin-top: 0.5rem;
+    }
+
+    .article-body :global(blockquote) {
+        margin-block: 2.5rem;
+        border-left: 2px solid var(--color-slate-400);
+        padding-left: 1.5rem;
+        color: var(--color-slate-700);
+        font-size: 1.2rem;
+        font-style: italic;
+    }
+
+    .article-body :global(code) {
+        border-radius: 0.3rem;
+        background: var(--color-slate-100);
+        padding: 0.15em 0.35em;
+        font-size: 0.9em;
+    }
+
+    .article-body :global(pre) {
+        margin-block: 2rem;
+        overflow-x: auto;
+        border-radius: 1rem;
+        background: var(--color-slate-900);
+        padding: 1.25rem;
+        color: white;
+    }
+
+    .article-body :global(pre code) {
+        background: transparent;
+        padding: 0;
+    }
+
+    .article-body :global(img) {
+        margin-block: 2.5rem;
+        width: 100%;
+        border-radius: 1rem;
+    }
+
+    .article-body :global(hr) {
+        margin-block: 3rem;
+        border-color: var(--color-slate-200);
+    }
+
+    .article-body :global(strong) {
+        color: var(--color-slate-950);
+        font-weight: 600;
+    }
+
+    @media (min-width: 768px) {
+        .article-body :global(p),
+        .article-body :global(ul),
+        .article-body :global(ol) {
+            font-size: 1.125rem;
+        }
+    }
+</style>

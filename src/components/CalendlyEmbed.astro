@@ -1,0 +1,54 @@
+---
+interface Props {
+    calendlyUrl?: string;
+}
+
+const {
+    calendlyUrl = "https://calendly.com/anafpoletto?hide_gdpr_banner=1&background_color=fcfcfc&primary_color=506582",
+} = Astro.props;
+---
+
+<div class="calendly-embed-container">
+    <div
+        class="calendly-inline-widget"
+        data-url={calendlyUrl}
+        style="min-width: 320px; height: 700px;"
+    >
+    </div>
+
+    <!-- Fallback/placeholder while Calendly loads -->
+    <noscript>
+        <div class="text-center py-12">
+            <p class="text-gray-400 mb-4">
+                Para reservar una cita, por favor habilita JavaScript o visita
+                directamente:
+            </p>
+            <a
+                href={calendlyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-white underline hover:text-gray-300"
+            >
+                {calendlyUrl}
+            </a>
+        </div>
+    </noscript>
+</div>
+
+<script is:inline>
+    // Load Calendly widget script
+    (function () {
+        if (document.querySelector('script[src*="calendly.com"]')) return;
+
+        const script = document.createElement("script");
+        script.src = "https://assets.calendly.com/assets/external/widget.js";
+        script.async = true;
+        document.head.appendChild(script);
+    })();
+</script>
+
+<style>
+    .calendly-inline-widget {
+        overflow: hidden;
+    }
+</style>

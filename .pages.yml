@@ -1,0 +1,87 @@
+media:
+  - name: blog_images
+    label: Imágenes del blog
+    input: public/images/blog
+    output: /images/blog
+    extensions: [jpg, jpeg, png, webp]
+    categories: [image]
+    rename: safe
+
+content:
+  - name: articles
+    label: Artículos
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    subfolders: false
+    filename:
+      template: "{primary}.md"
+      field: false
+    operations:
+      create: true
+      rename: true
+      delete: true
+    view:
+      fields: [title, pubDate, draft]
+      primary: title
+      sort: [pubDate, title]
+      search: [title, description]
+      default:
+        sort: pubDate
+        order: desc
+    fields:
+      - name: title
+        label: Título
+        type: string
+        required: true
+      - name: description
+        label: Descripción
+        type: text
+        required: true
+        description: Resumen breve que aparece en el listado y en buscadores.
+      - name: pubDate
+        label: Fecha de publicación
+        type: date
+        required: true
+        options:
+          time: false
+          format: yyyy-MM-dd
+      - name: coverImage
+        label: Imagen de portada
+        type: image
+        options:
+          media: blog_images
+          path: public/images/blog
+          extensions: [jpg, jpeg, png, webp]
+          rename: safe
+      - name: coverAlt
+        label: Texto alternativo de la portada
+        type: string
+        description: Obligatorio cuando se selecciona una imagen de portada.
+      - name: draft
+        label: Borrador
+        type: boolean
+        default: true
+        description: Desactívalo para publicar el artículo.
+      - name: body
+        label: Contenido
+        type: rich-text
+        required: true
+        options:
+          format: markdown
+          media: blog_images
+          path: public/images/blog
+          extensions: [jpg, jpeg, png, webp]
+          rename: safe
+          switcher: true
+
+settings:
+  content:
+    merge: true
+  commit:
+    identity: user
+    templates:
+      create: "content: crear {path}"
+      update: "content: actualizar {path}"
+      delete: "content: eliminar {path}"
+      rename: "content: renombrar {oldPath} a {newPath}"

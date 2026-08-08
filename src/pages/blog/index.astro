@@ -1,0 +1,89 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const posts = (
+    await getCollection("blog", ({ data }) =>
+        import.meta.env.PROD ? data.draft !== true : true,
+    )
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const formatDate = (date: Date) =>
+    new Intl.DateTimeFormat("es-ES", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    }).format(date);
+---
+
+<BaseLayout
+    title="Blog | Ana F. Poletto - Psicóloga"
+    description="Reflexiones sobre psicología, psicoanálisis y la experiencia cotidiana."
+>
+    <section class="bg-global text-slate-950 pt-32 md:pt-40 pb-20 md:pb-32">
+        <div class="container mx-auto px-4">
+            <header class="max-w-5xl mx-auto border-b border-slate-200 pb-14 md:pb-20">
+                <p class="text-sm md:text-base tracking-[0.2em] uppercase text-slate-600 mb-5">
+                    Blog
+                </p>
+                <h1 class="max-w-4xl text-4xl sm:text-5xl md:text-7xl font-semibold tracking-tight text-balance mb-7">
+                    Un espacio para leer y pensar
+                </h1>
+                <p class="max-w-2xl text-lg md:text-xl leading-relaxed text-slate-700 text-pretty">
+                    Reflexiones sobre psicología, psicoanálisis y la experiencia cotidiana.
+                </p>
+            </header>
+
+            <div class="max-w-5xl mx-auto">
+                {
+                    posts.length === 0 ? (
+                        <div class="py-20 md:py-28">
+                            <p class="text-lg md:text-xl text-slate-600">
+                                Aún no hay artículos publicados.
+                            </p>
+                        </div>
+                    ) : (
+                        <ol class="divide-y divide-slate-200">
+                            {posts.map((post) => (
+                                <li>
+                                    <a
+                                        href={`/blog/${post.id}`}
+                                        class="group grid gap-8 md:grid-cols-[1fr_17rem] py-12 md:py-16"
+                                    >
+                                        <div class="min-w-0">
+                                            <time
+                                                datetime={post.data.pubDate.toISOString()}
+                                                class="block text-sm text-slate-500 mb-4"
+                                            >
+                                                {formatDate(post.data.pubDate)}
+                                            </time>
+                                            <h2 class="text-2xl md:text-4xl font-semibold tracking-tight text-slate-950 group-hover:text-slate-600 transition-colors text-balance mb-4">
+                                                {post.data.title}
+                                            </h2>
+                                            <p class="max-w-2xl text-base md:text-lg leading-relaxed text-slate-700 text-pretty">
+                                                {post.data.description}
+                                            </p>
+                                            <span class="inline-block mt-6 text-sm font-medium text-slate-800 underline decoration-slate-300 underline-offset-4 group-hover:decoration-slate-800 transition-colors">
+                                                Leer artículo
+                                            </span>
+                                        </div>
+                                        {post.data.coverImage && (
+                                            <div class="aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100 md:order-last">
+                                                <img
+                                                    src={post.data.coverImage}
+                                                    alt={post.data.coverAlt}
+                                                    loading="lazy"
+                                                    class="h-full w-full object-cover grayscale transition-transform duration-500 group-hover:scale-[1.02]"
+                                                />
+                                            </div>
+                                        )}
+                                    </a>
+                                </li>
+                            ))}
+                        </ol>
+                    )
+                }
+            </div>
+        </div>
+    </section>
+</BaseLayout>

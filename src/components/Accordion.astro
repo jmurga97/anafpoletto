@@ -1,0 +1,88 @@
+---
+import IconChevronDown from "./icons/IconChevronDown.astro";
+
+interface Props {
+    question: string;
+    answer: string;
+    isOpen?: boolean;
+}
+
+const { question, answer, isOpen = false } = Astro.props;
+const uniqueId = `accordion-${Math.random().toString(36).substring(2, 9)}`;
+---
+
+<div
+    class="accordion-item border-b border-slate-700/30 text-slate-950"
+    data-open={isOpen ? "true" : "false"}
+>
+    <button
+        class="accordion-trigger w-full py-6 flex justify-between items-center text-left group"
+        aria-expanded={isOpen}
+        aria-controls={uniqueId}
+    >
+        <span
+            class="text-lg md:text-xl group-hover:text-slate-700 transition-colors pr-4 medium"
+        >
+            {question}
+        </span>
+        <span
+            class="accordion-icon text-slate-800 transition-transform duration-300 shrink-0"
+        >
+            <IconChevronDown class="w-5 h-5" />
+        </span>
+    </button>
+    <div
+        id={uniqueId}
+        class="accordion-content overflow-hidden transition-all duration-300"
+    >
+        <div class="pb-6 text-slate-800 leading-relaxed">
+            {answer}
+        </div>
+    </div>
+</div>
+
+<style>
+    .accordion-item[data-open="true"] .accordion-icon {
+        transform: rotate(180deg);
+    }
+
+    .accordion-content {
+        max-height: 0;
+    }
+
+    .accordion-item[data-open="true"] .accordion-content {
+        max-height: 500px;
+    }
+</style>
+
+<script>
+    document.addEventListener("astro:page-load", () => {
+        const accordionItems = document.querySelectorAll(".accordion-item");
+
+        accordionItems.forEach((item) => {
+            const trigger = item.querySelector(".accordion-trigger");
+            const content = item.querySelector(".accordion-content");
+
+            trigger?.addEventListener("click", () => {
+                const isOpen = item.getAttribute("data-open") === "true";
+
+                // Close all other accordions (optional - remove for multi-open)
+                accordionItems.forEach((otherItem) => {
+                    if (otherItem !== item) {
+                        otherItem.setAttribute("data-open", "false");
+                        otherItem
+                            .querySelector(".accordion-trigger")
+                            ?.setAttribute("aria-expanded", "false");
+                    }
+                });
+
+                // Toggle current
+                item.setAttribute("data-open", isOpen ? "false" : "true");
+                trigger.setAttribute(
+                    "aria-expanded",
+                    isOpen ? "false" : "true",
+                );
+            });
+        });
+    });
+</script>

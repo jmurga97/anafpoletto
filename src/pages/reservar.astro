@@ -1,0 +1,115 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CalendlyEmbed from "../components/CalendlyEmbed.astro";
+import InfoSection from "../components/InfoSection.astro";
+import InfoItem from "../components/InfoItem.astro";
+import IconClock from "../components/icons/IconClock.astro";
+import IconVideoCamera from "../components/icons/IconVideoCamera.astro";
+import IconGlobe from "../components/icons/IconGlobe.astro";
+import IconMail from "../components/icons/IconMail.astro";
+---
+
+<BaseLayout title="Reservar cita | Ana F. Poletto - Psicóloga">
+    <!-- Hero Section -->
+    <section class="pt-32 pb-12 bg-global">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                <p
+                    class="text-slate-700 text-sm tracking-widest uppercase mb-4 opacity-0 translate-y-6"
+                    id="reservar-label"
+                >
+                    Agenda tu cita
+                </p>
+                <h1
+                    class="text-4xl md:text-5xl lg:text-6xl text-slate-950 mb-6 opacity-0 translate-y-6 font-semibold"
+                    id="reservar-title"
+                >
+                    Reservar
+                </h1>
+                <p
+                    class="text-slate-700 text-pretty text-lg md:text-xl leading-relaxed opacity-0 translate-y-6"
+                    id="reservar-desc"
+                >
+                    Selecciona un horario disponible para tu primera consulta.
+                    Las sesiones se realizan online por videollamada.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="py-12 md:py-16 bg-global">
+        <div class="container mx-auto px-4">
+            <div
+                class="max-w-4xl mx-auto opacity-0 translate-y-10"
+                id="calendly-container"
+            >
+                <CalendlyEmbed
+                    calendlyUrl="https://calendly.com/anafpoletto?hide_gdpr_banner=1&background_color=fcfcfc&primary_color=506582"
+                />
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <InfoSection>
+        <InfoItem title="Duración" description="45 minutos a 1 hora por sesión">
+            <IconClock slot="icon" class="w-6 h-6 text-slate-400" />
+        </InfoItem>
+
+        <InfoItem title="Modalidad" description="Online por videollamada">
+            <IconVideoCamera slot="icon" class="w-6 h-6 text-slate-400" />
+        </InfoItem>
+
+        <InfoItem
+            title="Internacional"
+            description="Adaptado a tu zona horaria"
+        >
+            <IconGlobe slot="icon" class="w-6 h-6 text-slate-400" />
+        </InfoItem>
+    </InfoSection>
+
+    <!-- Contact Alternative -->
+    <section class="py-16 md:py-24 bg-global">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-xl mx-auto text-slate-950">
+                <h2 class="text-2xl md:text-3xl mb-4 font-semibold">
+                    ¿Prefieres contactar directamente?
+                </h2>
+                <p class="mb-6">
+                    Si tienes dudas o prefieres escribirme antes de agendar,
+                    puedes contactarme por email.
+                </p>
+                <a
+                    href="mailto:anafpoletto@gmail.com"
+                    class="inline-flex items-center gap-2 transition-colors"
+                >
+                    <IconMail class="w-5 h-5" />
+                    anafpoletto@gmail.com
+                </a>
+            </div>
+        </div>
+    </section>
+</BaseLayout>
+
+<script>
+    import gsap from "gsap";
+
+    document.addEventListener("astro:page-load", () => {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        tl.to("#reservar-label", {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            delay: 0.2,
+        })
+            .to("#reservar-title", { opacity: 1, y: 0, duration: 1 }, "-=0.5")
+            .to("#reservar-desc", { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
+            .to(
+                "#calendly-container",
+                { opacity: 1, y: 0, duration: 1 },
+                "-=0.3",
+            );
+    });
+</script>

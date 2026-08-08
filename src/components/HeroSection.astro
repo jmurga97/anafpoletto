@@ -1,0 +1,184 @@
+---
+// HeroSection.astro - Parallax hero with sticky Vanta background
+import VantaBackground from "./VantaBackground.astro";
+
+interface TextSection {
+    text: string;
+    position: "left" | "right";
+    speed: number;
+}
+
+const textSections: TextSection[] = [
+    {
+        text: "Bienvenido,",
+        position: "left",
+        speed: 0.3,
+    },
+    {
+        text: "te escucho.",
+        position: "right",
+        speed: 0.5,
+    },
+];
+---
+
+<section class="hero-parallax-container relative" id="hero-section">
+    <!-- Sticky Vanta Background -->
+    <div class="sticky top-0 h-screen w-full overflow-hidden z-0">
+        <VantaBackground
+            backgroundColor="0xfcfcfc"
+            color="0xced4da"
+            spacing={10}
+            chaos={4}
+        />
+    </div>
+
+    <!-- Parallax Text Sections -->
+    <div
+        class="parallax-content absolute top-0 left-0 w-full pointer-events-none"
+    >
+        {
+            textSections.map((section, index) => (
+                <div
+                    class={`parallax-section min-h-[30vh] flex items-center px-6 md:px-16 lg:px-24 `}
+                    data-speed={section.speed}
+                    data-index={index}
+                >
+                    <p
+                        class={`parallax-text text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-medium leading-tight text-slate-900 max-w-xs md:max-w-md lg:max-w-xl xl:max-w-2xl opacity-0 ${
+                            section.position === "left"
+                                ? "text-left"
+                                : "ml-[30%]"
+                        }`}
+                    >
+                        {section.text}
+                    </p>
+                </div>
+            ))
+        }
+    </div>
+</section>
+
+<style>
+    .hero-parallax-container {
+        /* 6 sections * 100vh + extra space for scroll */
+        height: 100vh;
+    }
+
+    .parallax-content {
+        height: 100vh;
+    }
+
+    .parallax-section {
+        position: relative;
+    }
+
+    .parallax-text {
+        transform: translateY(60px);
+        transition: opacity 500 ease-out;
+    }
+</style>
+
+<script>
+    import gsap from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    function initHeroParallax() {
+        const container = document.getElementById("hero-section");
+        if (!container) return;
+
+        const sections = container.querySelectorAll(".parallax-section");
+
+        sections.forEach((section, index) => {
+            const text = section.querySelector(".parallax-text");
+            const speed = parseFloat(
+                (section as HTMLElement).dataset.speed || "1",
+            );
+
+            // Calculate y movement based on speed - slower = more movement difference
+            const yMovement = (1 - speed) * 400;
+
+            // Create parallax effect with scrub
+            gsap.fromTo(
+                section,
+                {
+                    y: yMovement,
+                },
+                {
+                    y: -yMovement,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: container,
+                        start: "top top",
+                        end: "bottom bottom",
+                        scrub: true,
+                    },
+                },
+            );
+
+            // Fade in and slide up animation for each text
+            gsap.fromTo(
+                text,
+                {
+                    opacity: 0,
+                    y: 60,
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 80%",
+                        end: "top 40%",
+                        scrub: 0.5,
+                    },
+                },
+            );
+
+            // Fade out as section leaves viewport
+            gsap.fromTo(
+                text,
+                {
+                    opacity: 1,
+                },
+                {
+                    opacity: 0.2,
+                    ease: "power2.in",
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "bottom 60%",
+                        end: "bottom 20%",
+                        scrub: 0.5,
+                    },
+                },
+            );
+        });
+    }
+
+    function cleanup() {
+        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    }
+
+    // Initialize on page load
+    document.addEventListener("astro:page-load", () => {
+        cleanup();
+        // Small delay to ensure Vanta is loaded
+        requestAnimationFrame(() => {
+            initHeroParallax();
+        });
+    });
+
+    // Cleanup on page transition
+    document.addEventListener("astro:before-swap", cleanup);
+
+    // Initial load
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initHeroParallax);
+    } else {
+        initHeroParallax();
+    }
+</script>

@@ -1,0 +1,163 @@
+---
+// VantaBackground.astro - Vanta.js trunk effect background
+interface Props {
+    backgroundColor?: string;
+    color?: string;
+    spacing?: number;
+    chaos?: number;
+}
+
+const {
+    backgroundColor = "0x1a1a1a", // Grayscale dark
+    color = "0x757575", // Grayscale mid-tone
+    spacing = 6,
+    chaos = 4,
+} = Astro.props;
+---
+
+<div id="vanta-background" class="absolute z-0"></div>
+
+<style>
+    #vanta-background {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<script define:vars={{ backgroundColor, color, spacing, chaos }}>
+    // Store vantaEffect on window to persist across script re-runs
+    window.__vantaEffect = window.__vantaEffect || null;
+
+    function loadScript(src) {
+        return new Promise((resolve, reject) => {
+            // Check if script already exists and is loaded
+            const existing = document.querySelector(`script[src="${src}"]`);
+            if (existing) {
+                // If script exists, check if it's already loaded
+                if (existing.dataset.loaded === "true") {
+                    resolve();
+                    return;
+                }
+                // Wait for it to load
+                existing.addEventListener("load", () => resolve());
+                existing.addEventListener("error", () => reject());
+                return;
+            }
+
+            // Create and load new script
+            const script = document.createElement("script");
+            script.src = src;
+            script.onload = () => {
+                script.dataset.loaded = "true";
+                resolve();
+            };
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    function waitForVanta(maxAttempts = 50) {
+        return new Promise((resolve, reject) => {
+            let attempts = 0;
+            const check = () => {
+                if (window.VANTA && window.VANTA.TRUNK) {
+                    resolve();
+                } else if (attempts >= maxAttempts) {
+                    reject(new Error("Vanta.js TRUNK not available after waiting"));
+                } else {
+                    attempts++;
+                    setTimeout(check, 50);
+                }
+            };
+            check();
+        });
+    }
+
+    async function initVanta() {
+        const el = document.getElementById("vanta-background");
+        if (!el) {
+            console.warn("Vanta background element not found");
+            return;
+        }
+
+        // Cleanup any existing effect first
+        if (window.__vantaEffect) {
+            try {
+                window.__vantaEffect.destroy();
+            } catch (e) {
+                // Ignore cleanup errors
+            }
+            window.__vantaEffect = null;
+        }
+
+        try {
+            // Load scripts sequentially
+            await loadScript(
+                "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"
+            );
+            await loadScript(
+                "https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.trunk.min.js"
+            );
+
+            // Wait for VANTA to be available on window
+            await waitForVanta();
+
+            // Initialize Vanta effect
+            window.__vantaEffect = window.VANTA.TRUNK({
+                el,
+                mouseControls: false,
+                touchControls: false,
+                gyroControls: false,
+                minHeight: 200.0,
+                minWidth: 200.0,
+                scale: 1.0,
+                scaleMobile: 1.0,
+                backgroundColor: parseInt(backgroundColor, 16),
+                color: parseInt(color, 16),
+                spacing,
+                chaos,
+            });
+        } catch (error) {
+            console.error("Failed to initialize Vanta.js:", error);
+        }
+    }
+
+    function cleanup() {
+        if (window.__vantaEffect) {
+            try {
+                window.__vantaEffect.destroy();
+            } catch (e) {
+                // Ignore cleanup errors
+            }
+            window.__vantaEffect = null;
+        }
+    }
+
+    function shouldReduceMotion() {
+        return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    // Handle Astro page transitions
+    document.addEventListener("astro:page-load", () => {
+        if (shouldReduceMotion()) return;
+        // Use setTimeout to ensure DOM is fully ready
+        setTimeout(() => initVanta(), 0);
+    });
+
+    document.addEventListener("astro:before-swap", cleanup);
+
+    // Initial load - run immediately if DOM is ready, otherwise wait
+    if (!shouldReduceMotion()) {
+        if (document.readyState === "complete") {
+            initVanta();
+        } else if (document.readyState === "interactive") {
+            // DOM ready but resources may still be loading
+            setTimeout(() => initVanta(), 0);
+        } else {
+            // Still loading
+            window.addEventListener("DOMContentLoaded", () => {
+                setTimeout(() => initVanta(), 0);
+            });
+        }
+    }
+</script>

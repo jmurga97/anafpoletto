@@ -1,0 +1,45 @@
+---
+const links = [
+    { href: "/sobre-mi", label: "Sobre mí", class: "hidden sm:inline-flex" },
+    { href: "/blog", label: "Blog", class: "inline-flex" },
+];
+---
+
+<nav class="w-full bg-transparent absolute top-0 z-50" id="navbar">
+    <div class="max-w-9xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16 md:h-20">
+            <div class="shrink-0 flex items-center min-w-0">
+                <a href="/" class="font-light tracking-tighter text-slate-700 hover:text-gray-500 transition-colors truncate">
+                    <span class="text-xs sm:text-base md:hidden">Ana F. Poletto</span>
+                    <span class="hidden md:inline text-2xl lg:text-3xl">
+                        Ana F. Poletto, Lic. en Psicología
+                    </span>
+                </a>
+            </div>
+
+            <div
+                class="flex gap-2 sm:gap-4 md:gap-8 items-center shrink-0 ml-2"
+            >
+                {
+                    links.map((link) => (
+                        <a
+                            href={link.href}
+                            class:list={[
+                                "text-xs sm:text-sm md:text-base text-slate-800 hover:text-slate-600 font-medium transition-colors duration-200 whitespace-nowrap",
+                                link.class,
+                            ]}
+                        >
+                            {link.label}
+                        </a>
+                    ))
+                }
+                <a
+                    href="/reservar"
+                    class="bg-slate-800 text-white px-2.5 py-1.5 sm:px-4 sm:py-2 md:px-6 md:py-2.5 rounded-full text-[11px] sm:text-sm md:text-base font-medium hover:bg-slate-600 transition-colors duration-300 whitespace-nowrap"
+                >
+                    Reservar cita
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
